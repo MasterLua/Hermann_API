@@ -56,4 +56,18 @@ function Buy() {
     });    
 }
 
-Buy();
+function RetreiveSub() {
+    request({
+        url: "http://127.0.0.1:3050/sub_list",
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: {
+            key: "HermannAPI-25TYI4927POIU",
+            email: "test@test.fr"
+        }
+    }, function (error, response, body){
+        console.log(response);
+    });
+}
+
+RetreiveSub();
