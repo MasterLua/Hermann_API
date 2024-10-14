@@ -112,6 +112,7 @@ app.post('/buy', (req, res) => {
                             HermannTable["QueryDb"]("UPDATE `users` SET `suscription`='"+JSON.stringify(Sub)+"' WHERE `email` = '"+req.body.email+"'", async function(result1){})
                             HermannTable["QueryDb"]("INSERT INTO `payements_history`(`email`, `product_name`, `date`, `hours`) VALUES ('"+req.body.email+"','"+req.body.product_name+"', CURDATE(), CURRENT_TIME())", async function(result2){})        
                             HermannTable["DebugPrint"]("Subscription has been buyed. ("+req.body.product_name+", "+req.body.email+")")
+                            res.send({ buy_result: true })
                         }else{
                             HermannTable["DebugPrint"]("Subscription has already buyed. ("+req.body.product_name+", "+req.body.email+")")
                             res.send({ buy_result: false, code_error: "04", error: "Subscription has already buyed." })
@@ -129,6 +130,52 @@ app.post('/buy', (req, res) => {
     }else{
         HermannTable["DebugPrint"]("Request is not valid, Invalid API, No need informations for Register.")
         res.send({ buy_result: false, code_error: "02", error : "Invalid API, No need informations for Register." })
+    }
+})
+
+app.post('/sub_list', (req, res) => {
+    if(req.body && req.body.email && req.body.key && HermannTable["APIKeyChecking"](req.body.key)) {
+        HermannTable["QueryDb"]("SELECT * FROM `users` WHERE `email` = '"+req.body.email+"'", async function(result0){
+            if(result0[0]) {
+                HermannTable["QueryDb"]("SELECT * FROM `products`", async function(result1){
+                    var All_Sub = {}
+                    var Sub = JSON.parse(result0[0].suscription)
+                    var All_Products = {}
+                    console.log(result1)
+                    for (var i = 0; i < result1.length; i++){
+                        All_Products[result1[i].product_name] = {
+                            product_name: result1[i].product_name,
+                            product_label: result1[i].product_label,
+                            price: result1[i].price,
+                            subscription: result1[i].subscription,
+                        }
+                    }    
+
+                    console.log(All_Products)
+
+                    for (var i = 0; i < Object.keys(Sub).length; i++){
+                        console.log("Working")
+                        console.log(All_Products[Sub[i].product_name].product_name)
+                        // All_Sub[i] = {
+                        //     product_name: All_Products[Sub[i].product_name],
+                        //     product_label: result1[i].product_label,
+                        //     price: result1[i].price,
+                        //     subscription: result1[i].subscription,
+
+                        // }
+                        // All_Sub[i] = All_Products[Sub[i].product_name]
+                    }
+                    
+                    console.log(All_Sub)
+
+                    res.send(JSON.stringify(All_Sub))
+                    HermannTable["DebugPrint"]("Get list of subscribe. (email : "+req.body.email+")")
+                })                    
+            }else{
+                HermannTable["DebugPrint"]("Account not registred on system. (email : "+req.body.email+")")
+                res.send({ buy_result: false, code_error: "01", error: "This account is not registred on Website." })
+            }
+        })
     }
 })
 
