@@ -21,7 +21,7 @@ function Register() {
     
         }
     }, function (error, response, body){
-        console.log(response);
+        console.log(body);
     });    
 }
 
@@ -37,7 +37,7 @@ function login() {
             password: "PasswordSecure@1"
         }
     }, function (error, response, body){
-        console.log(response);
+        console.log(body);
     });    
 }
 
@@ -52,7 +52,7 @@ function Buy() {
             product_name: "hermann_1_month"
         }
     }, function (error, response, body){
-        console.log(response);
+        console.log(body);
     });    
 }
 
@@ -66,8 +66,22 @@ function RetreiveSub() {
             email: "test@test.fr"
         }
     }, function (error, response, body){
-        console.log(response);
+        console.log(body);
     });
 }
 
-RetreiveSub();
+function RetriveList() {
+    request({
+        url: "http://127.0.0.1:3050/get_product",
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: {
+            key: "HermannAPI-25TYI4927POIU"
+        }
+    }, function (error, response, body){
+        console.log(body);
+    });
+}
+
+RetriveList();
+// Buy();
